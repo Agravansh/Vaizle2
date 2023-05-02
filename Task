@@ -1,0 +1,40 @@
+function solution(D) {
+  // Initialize a dictionary to store the sum of values for each day
+  let daySum = {'Mon': 0, 'Tue': 0, 'Wed': 0, 'Thu': 0, 'Fri': 0, 'Sat': 0, 'Sun': 0};
+  
+  // Sort the keys of the input dictionary in ascending order
+  let sortedKeys = Object.keys(D).sort();
+  
+  // Loop through the sorted keys and populate the day_sum dictionary
+  let prevDay = null;
+  for (let i = 0; i < sortedKeys.length; i++) {
+    let day = new Date(sortedKeys[i]).toLocaleString('en-us', {weekday: 'short'});
+    let value = D[sortedKeys[i]];
+    
+    // If the current day is not in the day_sum dictionary, add it with value 0
+    if (!daySum.hasOwnProperty(day)) {
+      daySum[day] = 0;
+    }
+    
+    // If there was a gap between the current day and the previous day,
+    // fill the gap with the mean value of the previous and next day
+    if (prevDay !== null && day !== prevDay) {
+      let prevValue = daySum[prevDay];
+      let nextValue = daySum[day];
+      let meanValue = Math.round((prevValue + nextValue) / 2);
+      let daysToAdd = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].slice(
+        ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].indexOf(prevDay) + 1,
+        ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].indexOf(day)
+      );
+      for (let j = 0; j < daysToAdd.length; j++) {
+        daySum[daysToAdd[j]] = meanValue;
+      }
+    }
+    
+    // Add the current value to the sum for the current day
+    daySum[day] += value;
+    prevDay = day;
+  }
+  
+  return daySum;
+}
